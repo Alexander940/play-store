@@ -147,7 +147,14 @@ permite un tiempo de entrega corto y mantenimiento simple a largo plazo.
   <tr><td><strong>Snapshots EBS automáticos</strong></td><td>Respaldos diarios de la base de datos y configuración, con retención de 7 días.</td></tr>
 </table>
 
-<h2>3. Costos fijos mensuales estimados</h2>
+<h2>3. Diagrama del flujo</h2>
+<p>El siguiente diagrama muestra el recorrido completo de un mensaje del usuario, desde que llega por WhatsApp hasta que recibe la respuesta de confirmación. Toda la infraestructura interior al recuadro punteado corre en una única instancia AWS EC2.</p>
+<figure style="margin: 14px 0; text-align: center; page-break-inside: avoid;">
+  <img src="flujo-automatizacion.png" alt="Diagrama del flujo end-to-end del sistema de inventario por WhatsApp" style="max-width: 100%; height: auto; border: 1px solid #e5e7eb; border-radius: 4px;">
+  <figcaption style="font-size: 9.5pt; color: #6b7280; margin-top: 6px;">Flujo end-to-end: mensaje del usuario → orquestación con n8n → IA → base de datos → respuesta.</figcaption>
+</figure>
+
+<h2>4. Costos fijos mensuales estimados</h2>
 <p>Los siguientes son costos recurrentes de operación, expresados en dólares estadounidenses (USD). Corresponden a un escenario de uso típico de una tienda con volumen moderado de mensajes.</p>
 
 <table>
@@ -174,7 +181,7 @@ permite un tiempo de entrega corto y mantenimiento simple a largo plazo.
   <tr><td>Desarrollo e implementación</td><td style="text-align:right">A convenir</td></tr>
 </table>
 
-<h2>4. Tiempo estimado de desarrollo</h2>
+<h2>5. Tiempo estimado de desarrollo</h2>
 <p>El proyecto se entregará por fases incrementales. Cada fase deja una versión funcional que el cliente puede usar y validar antes de avanzar a la siguiente.</p>
 
 <div class="phase-card">
@@ -206,7 +213,7 @@ permite un tiempo de entrega corto y mantenimiento simple a largo plazo.
 <strong>Esfuerzo total estimado: 30 horas de desarrollo</strong>, distribuidas de forma incremental a partir de la firma del acuerdo y la entrega de los accesos requeridos (cuenta de AWS, cuenta de Meta Business, cuenta de Google). El calendario concreto (horas por semana) se acordará con el cliente en función de la urgencia y la disponibilidad para validaciones intermedias.
 </p>
 
-<h2>5. Entregables</h2>
+<h2>6. Entregables</h2>
 <ul>
   <li>Sistema funcional desplegado y operativo en producción sobre AWS EC2.</li>
   <li>Base de datos PostgreSQL con el inventario inicial cargado y esquema documentado.</li>
@@ -218,7 +225,7 @@ permite un tiempo de entrega corto y mantenimiento simple a largo plazo.
   <li>30 días de soporte post-entrega para ajustes y correcciones.</li>
 </ul>
 
-<h2>6. Supuestos y consideraciones</h2>
+<h2>7. Supuestos y consideraciones</h2>
 <ul>
   <li>El cliente facilitará una línea telefónica dedicada para WhatsApp Business.</li>
   <li>El cliente proveerá el listado inicial de productos en formato digital.</li>
