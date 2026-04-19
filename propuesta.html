@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Propuesta Técnica — Sistema de Inventario por WhatsApp</title>
+<style>
+  @page { size: A4; margin: 22mm 20mm; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #1f2937;
+    font-size: 11pt;
+    line-height: 1.55;
+    margin: 0;
+  }
+  h1 {
+    font-size: 26pt;
+    color: #0f766e;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.5px;
+  }
+  h2 {
+    font-size: 15pt;
+    color: #0f766e;
+    border-bottom: 2px solid #0f766e;
+    padding-bottom: 4px;
+    margin-top: 28px;
+    margin-bottom: 12px;
+  }
+  h3 { font-size: 12pt; color: #134e4a; margin: 14px 0 6px; }
+  .subtitle { color: #6b7280; font-size: 11pt; margin-bottom: 4px; }
+  .meta { color: #6b7280; font-size: 9.5pt; margin-bottom: 20px; }
+  .cover {
+    border-left: 5px solid #0f766e;
+    padding: 10px 0 10px 18px;
+    margin-bottom: 24px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0 4px;
+    font-size: 10pt;
+  }
+  th {
+    background: #0f766e;
+    color: #fff;
+    text-align: left;
+    padding: 8px 10px;
+    font-weight: 600;
+  }
+  td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #f9fafb; }
+  .total-row td {
+    background: #ecfdf5 !important;
+    font-weight: 700;
+    color: #065f46;
+    border-top: 2px solid #0f766e;
+  }
+  ul { margin: 6px 0 6px 20px; padding: 0; }
+  li { margin-bottom: 4px; }
+  .note {
+    background: #fef3c7;
+    border-left: 4px solid #f59e0b;
+    padding: 10px 14px;
+    font-size: 10pt;
+    margin: 12px 0;
+    border-radius: 3px;
+  }
+  .footer {
+    margin-top: 40px;
+    padding-top: 14px;
+    border-top: 1px solid #e5e7eb;
+    font-size: 9pt;
+    color: #6b7280;
+    text-align: center;
+  }
+  .phase-card {
+    background: #f0fdfa;
+    border: 1px solid #99f6e4;
+    padding: 10px 14px;
+    border-radius: 5px;
+    margin-bottom: 8px;
+  }
+  .phase-card strong { color: #0f766e; }
+  .two-col { display: flex; gap: 18px; }
+  .two-col > div { flex: 1; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1>Sistema de Inventario por WhatsApp</h1>
+  <div class="subtitle">Propuesta técnica y plan de desarrollo</div>
+  <div class="meta">Fecha de emisión: 14 de abril de 2026 &nbsp;•&nbsp; Validez de la propuesta: 30 días</div>
+</div>
+
+<h2>1. Resumen ejecutivo</h2>
+<p>
+Se propone desarrollar un sistema que permita gestionar el inventario de la tienda
+directamente desde WhatsApp, mediante mensajes de texto y notas de voz. El
+personal no requerirá instalar aplicaciones adicionales ni aprender a usar
+software nuevo: basta con enviar un mensaje en lenguaje natural (por ejemplo,
+<em>"agrega 20 cocas de 600"</em>) y el sistema actualiza el inventario
+automáticamente, respondiendo con una confirmación.
+</p>
+<p>
+La arquitectura se basa en herramientas maduras y de bajo costo operativo, lo que
+permite un tiempo de entrega corto y mantenimiento simple a largo plazo.
+</p>
+
+<h2>2. Tecnologías propuestas</h2>
+
+<h3>2.1 Canal de entrada</h3>
+<table>
+  <tr><th style="width:32%">Tecnología</th><th>Rol en el proyecto</th></tr>
+  <tr><td><strong>WhatsApp Cloud API (Meta)</strong></td><td>Canal oficial de mensajería. Recibe y envía mensajes de texto y notas de voz.</td></tr>
+  <tr><td><strong>Whisper (Groq)</strong></td><td>Transcripción de notas de voz a texto con alta precisión en español.</td></tr>
+</table>
+
+<h3>2.2 Orquestación e inteligencia</h3>
+<table>
+  <tr><th style="width:32%">Tecnología</th><th>Rol en el proyecto</th></tr>
+  <tr><td><strong>n8n (autoalojado)</strong></td><td>Motor de flujos que conecta WhatsApp, la IA y la base de datos. Visual y mantenible.</td></tr>
+  <tr><td><strong>Claude Haiku 4.5 (Anthropic)</strong></td><td>Interpreta el mensaje del usuario, identifica la intención (consultar, agregar, reportar) y extrae el producto y la cantidad.</td></tr>
+  <tr><td><strong>Embeddings (OpenAI)</strong></td><td>Búsqueda difusa de productos para tolerar errores de transcripción o escritura.</td></tr>
+</table>
+
+<h3>2.3 Datos y almacenamiento</h3>
+<table>
+  <tr><th style="width:32%">Tecnología</th><th>Rol en el proyecto</th></tr>
+  <tr><td><strong>PostgreSQL (autoalojado)</strong></td><td>Base de datos del inventario, desplegada en la misma instancia EC2 mediante Docker. Robusta, estándar de la industria y sin costos de licencia.</td></tr>
+  <tr><td><strong>pgAdmin / Adminer</strong></td><td>Panel web para consultar y editar productos manualmente cuando sea necesario.</td></tr>
+  <tr><td><strong>Tabla de auditoría</strong></td><td>Registro automático de cada movimiento: quién, qué, cuándo y cuánto.</td></tr>
+</table>
+
+<h3>2.4 Infraestructura</h3>
+<table>
+  <tr><th style="width:32%">Tecnología</th><th>Rol en el proyecto</th></tr>
+  <tr><td><strong>AWS EC2 (t3.medium)</strong></td><td>Servidor virtual que aloja n8n y PostgreSQL en contenedores Docker. 2 vCPU y 4 GB de RAM, suficiente para el volumen previsto con margen de crecimiento.</td></tr>
+  <tr><td><strong>AWS EBS (gp3, 30 GB)</strong></td><td>Almacenamiento persistente para la base de datos, respaldos y volúmenes de Docker.</td></tr>
+  <tr><td><strong>Docker + Docker Compose</strong></td><td>Orquestación de los servicios (n8n, PostgreSQL, reverse proxy) para despliegue reproducible y actualizaciones limpias.</td></tr>
+  <tr><td><strong>Caddy / Nginx + Let's Encrypt</strong></td><td>Reverse proxy con certificado SSL gratuito y renovación automática. Endpoint seguro para los webhooks de WhatsApp.</td></tr>
+  <tr><td><strong>Snapshots EBS automáticos</strong></td><td>Respaldos diarios de la base de datos y configuración, con retención de 7 días.</td></tr>
+</table>
+
+<h2>3. Costos fijos mensuales estimados</h2>
+<p>Los siguientes son costos recurrentes de operación, expresados en dólares estadounidenses (USD). Corresponden a un escenario de uso típico de una tienda con volumen moderado de mensajes.</p>
+
+<table>
+  <tr><th>Concepto</th><th>Proveedor</th><th style="text-align:right">Costo mensual (USD)</th></tr>
+  <tr><td>WhatsApp Cloud API</td><td>Meta</td><td style="text-align:right">0 – 15</td></tr>
+  <tr><td>EC2 t3.medium (n8n + PostgreSQL)</td><td>AWS</td><td style="text-align:right">19 – 30</td></tr>
+  <tr><td>EBS gp3 30 GB + snapshots</td><td>AWS</td><td style="text-align:right">3 – 5</td></tr>
+  <tr><td>Transferencia de datos saliente</td><td>AWS</td><td style="text-align:right">1 – 3</td></tr>
+  <tr><td>Claude Haiku 4.5 (IA)</td><td>Anthropic</td><td style="text-align:right">3 – 8</td></tr>
+  <tr><td>Transcripción de voz</td><td>Groq Whisper</td><td style="text-align:right">2 – 5</td></tr>
+  <tr><td>Dominio (prorrateado)</td><td>Registrador</td><td style="text-align:right">1</td></tr>
+  <tr class="total-row"><td colspan="2">Total estimado mensual</td><td style="text-align:right">USD 29 – 67</td></tr>
+</table>
+
+<div class="note">
+  <strong>Nota:</strong> los primeros 1.000 mensajes iniciados por el cliente en WhatsApp son gratuitos cada mes. El costo del EC2 t3.medium corresponde a USD 30/mes bajo demanda o ~USD 19/mes con una instancia reservada de 1 año (recomendado tras validar el sistema en producción). PostgreSQL corre en la misma instancia sin costo adicional de licencia. El costo de IA depende del volumen de mensajes: el rango estimado cubre hasta ~3.000 interacciones mensuales.
+</div>
+
+<h3>Costos únicos (una sola vez)</h3>
+<table>
+  <tr><th>Concepto</th><th style="text-align:right">Costo (USD)</th></tr>
+  <tr><td>Configuración de cuenta de WhatsApp Business y verificación con Meta</td><td style="text-align:right">0</td></tr>
+  <tr><td>Registro de dominio (anual)</td><td style="text-align:right">12</td></tr>
+  <tr><td>Desarrollo e implementación</td><td style="text-align:right">A convenir</td></tr>
+</table>
+
+<h2>4. Tiempo estimado de desarrollo</h2>
+<p>El proyecto se entregará por fases incrementales. Cada fase deja una versión funcional que el cliente puede usar y validar antes de avanzar a la siguiente.</p>
+
+<div class="phase-card">
+  <strong>Fase 1 — Configuración e integración base (7 h)</strong><br>
+  Alta de WhatsApp Business, provisión del EC2 t3.medium, despliegue de n8n y PostgreSQL mediante Docker Compose, configuración de reverse proxy con SSL, creación del esquema de base de datos y webhook operativo.
+</div>
+
+<div class="phase-card">
+  <strong>Fase 2 — Flujo de texto (10 h)</strong><br>
+  Interpretación de mensajes de texto, consultas de stock, alta de inventario, respuestas automáticas.
+</div>
+
+<div class="phase-card">
+  <strong>Fase 3 — Notas de voz (5 h)</strong><br>
+  Transcripción de audios con Whisper y búsqueda difusa de productos para tolerar errores de transcripción.
+</div>
+
+<div class="phase-card">
+  <strong>Fase 4 — Reportes, confirmaciones y auditoría (5 h)</strong><br>
+  Reportes bajo demanda, alertas de stock bajo, confirmación de acciones sensibles, log de auditoría.
+</div>
+
+<div class="phase-card">
+  <strong>Fase 5 — Pruebas, capacitación y entrega (3 h)</strong><br>
+  Pruebas con usuarios reales, ajustes finales, capacitación al personal, documentación de uso.
+</div>
+
+<p style="margin-top:14px">
+<strong>Esfuerzo total estimado: 30 horas de desarrollo</strong>, distribuidas de forma incremental a partir de la firma del acuerdo y la entrega de los accesos requeridos (cuenta de AWS, cuenta de Meta Business, cuenta de Google). El calendario concreto (horas por semana) se acordará con el cliente en función de la urgencia y la disponibilidad para validaciones intermedias.
+</p>
+
+<h2>5. Entregables</h2>
+<ul>
+  <li>Sistema funcional desplegado y operativo en producción sobre AWS EC2.</li>
+  <li>Base de datos PostgreSQL con el inventario inicial cargado y esquema documentado.</li>
+  <li>Configuración de Docker Compose versionada y lista para reproducir el entorno.</li>
+  <li>Política de respaldos automáticos (snapshots EBS) configurada.</li>
+  <li>Manual de uso en español dirigido al personal de la tienda.</li>
+  <li>Documentación técnica para futuras ampliaciones.</li>
+  <li>Capacitación remota de 1 hora al personal que usará el sistema.</li>
+  <li>30 días de soporte post-entrega para ajustes y correcciones.</li>
+</ul>
+
+<h2>6. Supuestos y consideraciones</h2>
+<ul>
+  <li>El cliente facilitará una línea telefónica dedicada para WhatsApp Business.</li>
+  <li>El cliente proveerá el listado inicial de productos en formato digital.</li>
+  <li>El cliente proveerá la cuenta de AWS donde se desplegará la infraestructura, o autorizará la creación de una nueva a su nombre.</li>
+  <li>Los costos mensuales son facturados directamente por los proveedores de servicios al cliente (AWS, Meta, Anthropic, Groq, Google); el desarrollador no intermedia pagos recurrentes.</li>
+  <li>El mantenimiento del sistema operativo de la instancia EC2 (parches de seguridad, actualizaciones de Docker) puede incluirse en un contrato de soporte mensual opcional tras los 30 días de soporte inicial.</li>
+  <li>Ampliaciones posteriores (multi-sucursal, integración con punto de venta, app móvil, alta disponibilidad) se cotizan por separado.</li>
+</ul>
+
+<div class="footer">
+  Propuesta preparada para el cliente &nbsp;•&nbsp; 14 de abril de 2026<br>
+  Este documento tiene carácter informativo y no constituye un contrato vinculante hasta su firma por ambas partes.
+</div>
+
+</body>
+</html>
